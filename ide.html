@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Drawflow</title>
+</head>
+
+<body>
+    <script src="assets/vendor/drawflow/drawflow.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
+        integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="assets/vendor/drawflow/drawflow.min.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/beautiful.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
+        integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+    <header>
+        <h2>PrograMur Editor</h2>
+        <div class="github-link">
+            <a href="index.html" class="logo"><img src="assets/img/favicon.png" height="55" alt="" class="img-fluid"></a>
+        </div>
+    </header>
+    <div class="wrapper">
+        <div class="col">
+            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="forward">
+                <i class="fas fa-arrow-up"></i><span> Move Forward</span>
+            </div>
+
+            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="backwards">
+                <i class="fas fa-arrow-down"></i><span> Move Backwards</span>
+            </div>
+
+            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="right">
+                <i class="fas fa-redo"></i><span> Turn Right</span>
+            </div>
+
+            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="left">
+                <i class="fas fa-undo"></i><span> Turn Left</span>
+            </div>
+
+            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="stop">
+                <i class="far fa-hand-paper"></i><span> Stop</span>
+            </div>
+
+            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="wait">
+                <i class="far fa-clock"></i><span> Wait</span>
+            </div>
+
+            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="action">
+                <i class="fas fa-calculator"></i><span> Action</span>
+            </div>
+
+            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="condition">
+                <i class="fas fa-question"></i><span> Condition</span>
+            </div>
+        </div>
+        <div class="col-right">
+            <!--<div class="menu">
+                <ul>
+                    <li onclick="editor.changeModule('Home'); changeModule(event);" class="selected">Home</li>
+                    <li onclick="editor.changeModule('Other'); changeModule(event);">Other Module</li>
+                </ul>
+            </div>-->
+            <div id="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)">
+
+                <div class="btn-export" onclick="Swal.fire({ title: 'Export',
+        html: '<pre><code>'+JSON.stringify(editor.export(), null,4)+'</code></pre>'
+        })">Export</div>
+                <div class="btn-clear" onclick="editor.clearModuleSelected()">Clear</div>
+                <div class="btn-lock">
+                    <i id="lock" class="fas fa-lock" onclick="editor.editor_mode='fixed'; changeMode('lock');"></i>
+                    <i id="unlock" class="fas fa-lock-open" onclick="editor.editor_mode='edit'; changeMode('unlock');"
+                        style="display:none;"></i>
+                </div>
+                <div class="bar-zoom">
+                    <i class="fas fa-search-minus" onclick="editor.zoom_out()"></i>
+                    <i class="fas fa-search" onclick="editor.zoom_reset()"></i>
+                    <i class="fas fa-search-plus" onclick="editor.zoom_in()"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var id = document.getElementById("drawflow");
+        const editor = new Drawflow(id);
+        editor.reroute = true;
+        editor.reroute_fix_curvature = false;
+        editor.force_first_input = false;
+        editor.start();
+
+        var outputs = 1;
+        editor.addNode("start", 0, 1, 150, 150, '', {},
+                        '<div><div class="title-box"><i class="fas fa-cogs"></i> Start</div></div>');
+
+        /* Mouse and Touch Actions */
+        var elements = document.getElementsByClassName('drag-drawflow');
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].addEventListener('touchend', drop, false);
+            elements[i].addEventListener('touchmove', positionMobile, false);
+            elements[i].addEventListener('touchstart', drag, false);
+        }
+
+        var mobile_item_selec = '';
+        var mobile_last_move = null;
+        function positionMobile(ev) {
+            mobile_last_move = ev;
+        }
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            if (ev.type === "touchstart") {
+                mobile_item_selec = ev.target.closest(".drag-drawflow").getAttribute('data-node');
+            } else {
+                ev.dataTransfer.setData("node", ev.target.getAttribute('data-node'));
+            }
+        }
+
+        function drop(ev) {
+            if (ev.type === "touchend") {
+                var parentdrawflow = document.elementFromPoint(mobile_last_move.touches[0].clientX, mobile_last_move.touches[0].clientY).closest("#drawflow");
+                if (parentdrawflow != null) {
+                    addNodeToDrawFlow(mobile_item_selec, mobile_last_move.touches[0].clientX, mobile_last_move.touches[0].clientY);
+                }
+                mobile_item_selec = '';
+            } else {
+                ev.preventDefault();
+                var data = ev.dataTransfer.getData("node");
+                addNodeToDrawFlow(data, ev.clientX, ev.clientY);
+            }
+
+        }
+
+        const NODE_HTML_TITLE = new Map([
+            ['forward',   '<i class="fas fa-arrow-up"></i> Move Forward'],
+            ['backwards', '<i class="fas fa-arrow-down"></i> Move Backwards'],
+            ['right',     '<i class="fas fa-redo"></i> Turn Right'],
+            ['left',      '<i class="fas fa-undo"></i> Turn Left'],
+            ['stop',      '<i class="far fa-hand-paper"></i> Stop'],
+            ['wait',      '<i class="far fa-clock"></i> Wait'],
+            ['action',    '<i class="fas fa-calculator"></i> Action'],
+            ['condition', '<i class="fas fa-question"></i> Condition']
+        ]);
+
+        const NODE_HTML_BOX = new Map([
+            ['forward',   ''],
+            ['backwards', ''],
+            ['right',     ''],
+            ['left',      ''],
+            ['stop',      ''],
+            ['wait',      '<div class="box"><p>Delay:</p><input type="text" df-delay placeholder="ms">'],
+            ['action',    '<div class="box"><p>Action:</p><input type="text" df-action placeholder="a = a + 1">'],
+            ['condition', '<div class="box"><p>Condition:</p><input type="text" df-condition placeholder="a == b">'],
+        ]);
+
+        function addNodeToDrawFlow(name, pos_x, pos_y) {
+            if (editor.editor_mode === 'fixed') {
+                return false;
+            }
+            pos_x = pos_x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)) - (editor.precanvas.getBoundingClientRect().x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)));
+            pos_y = pos_y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) - (editor.precanvas.getBoundingClientRect().y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)));
+
+            var html = '<div>';
+            html += '<div class="title-box">' + NODE_HTML_TITLE.get(name) + '</div>';
+            if (NODE_HTML_BOX.get(name))
+                html += NODE_HTML_BOX.get(name);
+            html += '</div>';
+
+            var outputs = name == "condition" ? 2 : 1;
+            editor.addNode(name, 1, outputs, pos_x, pos_y, '', {}, html);
+        }
+
+        var transform = '';
+        function showpopup(e) {
+            e.target.closest(".drawflow-node").style.zIndex = "9999";
+            e.target.children[0].style.display = "block";
+            //document.getElementById("modalfix").style.display = "block";
+
+            //e.target.children[0].style.transform = 'translate('+translate.x+'px, '+translate.y+'px)';
+            transform = editor.precanvas.style.transform;
+            editor.precanvas.style.transform = '';
+            editor.precanvas.style.left = editor.canvas_x + 'px';
+            editor.precanvas.style.top = editor.canvas_y + 'px';
+            console.log(transform);
+
+            //e.target.children[0].style.top  =  -editor.canvas_y - editor.container.offsetTop +'px';
+            //e.target.children[0].style.left  =  -editor.canvas_x  - editor.container.offsetLeft +'px';
+            editor.editor_mode = "fixed";
+
+        }
+
+        function closemodal(e) {
+            e.target.closest(".drawflow-node").style.zIndex = "2";
+            e.target.parentElement.parentElement.style.display = "none";
+            //document.getElementById("modalfix").style.display = "none";
+            editor.precanvas.style.transform = transform;
+            editor.precanvas.style.left = '0px';
+            editor.precanvas.style.top = '0px';
+            editor.editor_mode = "edit";
+        }
+
+        function changeModule(event) {
+            var all = document.querySelectorAll(".menu ul li");
+            for (var i = 0; i < all.length; i++) {
+                all[i].classList.remove('selected');
+            }
+            event.target.classList.add('selected');
+        }
+
+        function changeMode(option) {
+
+            //console.log(lock.id);
+            if (option == 'lock') {
+                lock.style.display = 'none';
+                unlock.style.display = 'block';
+            } else {
+                lock.style.display = 'block';
+                unlock.style.display = 'none';
+            }
+
+        }
+
+        editor.on("connectionCreated", function(arg) {
+            editor.getNodeFromId(arg.output_id).outputs[arg.output_class].connections
+
+            for (conn of editor.getNodeFromId(1).outputs["output_1"].connections)
+                if (arg.input_id != conn.node)
+                    editor.removeSingleConnection(arg.output_id, conn.node, arg.output_class, conn.output);
+        });
+
+    </script>
+</body>
+
+</html>
