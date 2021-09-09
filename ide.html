@@ -43,6 +43,9 @@
                 <i class="fas fa-undo"></i><span> Turn Left</span>
             </div>
 
+            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="start">
+                <i class="fas fa-cogs"></i><span> Start</span>
+            </div>
             <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="stop">
                 <i class="far fa-hand-paper"></i><span> Stop</span>
             </div>
@@ -92,6 +95,7 @@
         editor.reroute = true;
         editor.reroute_fix_curvature = false;
         editor.force_first_input = false;
+        editor.zoom_min = 0.8;
         editor.start();
 
         var outputs = 1;
@@ -144,6 +148,7 @@
             ['backwards', '<i class="fas fa-arrow-down"></i> Move Backwards'],
             ['right',     '<i class="fas fa-redo"></i> Turn Right'],
             ['left',      '<i class="fas fa-undo"></i> Turn Left'],
+            ['start',     '<i class="fas fa-cogs"></i> Start'],
             ['stop',      '<i class="far fa-hand-paper"></i> Stop'],
             ['wait',      '<i class="far fa-clock"></i> Wait'],
             ['action',    '<i class="fas fa-calculator"></i> Action'],
@@ -155,6 +160,7 @@
             ['backwards', ''],
             ['right',     ''],
             ['left',      ''],
+            ['start',     ''],
             ['stop',      ''],
             ['wait',      '<div class="box"><p>Delay:</p><input type="text" df-delay placeholder="ms">'],
             ['action',    '<div class="box"><p>Action:</p><input type="text" df-action placeholder="a = a + 1">'],
@@ -174,8 +180,15 @@
                 html += NODE_HTML_BOX.get(name);
             html += '</div>';
 
-            var outputs = name == "condition" ? 2 : 1;
-            editor.addNode(name, 1, outputs, pos_x, pos_y, '', {}, html);
+            editor.addNode(name, calculateInputs(name), calculateOutputs(name), pos_x, pos_y, '', {}, html);
+        }
+
+        function calculateInputs(name) {
+            return name == "start" ? 0 : 1;
+        }
+
+        function calculateOutputs(name) {
+            return name == "condition" ? 2 : 1;
         }
 
         var transform = '';
