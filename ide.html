@@ -98,7 +98,6 @@
         editor.zoom_min = 0.8;
         editor.start();
 
-        var outputs = 1;
         editor.addNode("start", 0, 1, 150, 150, '', {},
                         '<div><div class="title-box"><i class="fas fa-cogs"></i> Start</div></div>');
 
@@ -241,13 +240,22 @@
 
         }
 
-        editor.on("connectionCreated", function(arg) {
-            editor.getNodeFromId(arg.output_id).outputs[arg.output_class].connections
+        // Make sure connections are 1-1
+        editor.on("connectionCreated", function( connectionContext ) {
+            var outputNode = editor.getNodeFromId(connectionContext.output_id);
+            removeDuplicateConnections( outputNode.outputs["output_1"].connections, connectionContext );
 
-            for (conn of editor.getNodeFromId(1).outputs["output_1"].connections)
-                if (arg.input_id != conn.node)
-                    editor.removeSingleConnection(arg.output_id, conn.node, arg.output_class, conn.output);
+            // Condition nodes        
+            if ( outputNode.outputs["output_2"] ) {
+                removeDuplicateConnections( outputNode.outputs["output_2"].connections, connectionContext );
+            }
         });
+
+        function removeDuplicateConnections( outputConnections, connectionContext ) {
+            for (conn of outputConnections)
+                if (connectionContext.input_id != conn.node)
+                    editor.removeSingleConnection(connectionContext.output_id, conn.node, connectionContext.output_class, conn.output);
+        }
 
     </script>
 </body>
