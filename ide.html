@@ -179,7 +179,7 @@
                 html += NODE_HTML_BOX.get(name);
             html += '</div>';
 
-            editor.addNode(name, calculateInputs(name), calculateOutputs(name), pos_x, pos_y, '', {}, html);
+            editor.addNode(name, calculateInputs(name), calculateOutputs(name), pos_x, pos_y, name, {}, html);
         }
 
         function calculateInputs(name) {
