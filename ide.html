@@ -175,6 +175,14 @@
             if (editor.editor_mode === 'fixed') {
                 return false;
             }
+            if ( name == 'start' && editor.getNodesFromName('start').length > 0 ) {
+                Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        html: 'You can only have 1 START node'
+                    });
+                return false;
+            }
             pos_x = pos_x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)) - (editor.precanvas.getBoundingClientRect().x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)));
             pos_y = pos_y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) - (editor.precanvas.getBoundingClientRect().y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)));
 
@@ -263,6 +271,16 @@
         }
 
         function sendJson() {
+            
+            if ( editor.getNodesFromName('start').length != 1 ) {
+                Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        html: 'Cannot submit instructions without a START node!'
+                    });
+                return;
+            }
+
             var xhr = new XMLHttpRequest();
             xhr.open("POST", SERVER_URL, true);
             xhr.setRequestHeader("Content-Type", "application/json");
@@ -272,14 +290,14 @@
                         icon: 'success',
                         title: 'Success',
                         text: 'Instructions sent successfully. Your robot should be on the move!'
-                    })
+                    });
                 }
                 else {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
                         html: 'Something went wrong!. Make sure your robot is listening at <b>' + SERVER_URL + '</b>'
-                    })
+                    });
                 }
             };
             xhr.send(JSON.stringify(editor.export()));
