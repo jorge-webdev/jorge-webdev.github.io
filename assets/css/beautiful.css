@@ -370,3 +370,40 @@ cursor: pointer;
     width: 80%;
   }
 }
+
+/* Menu */
+.menu-accordion {
+  height: 50px;
+  width: 300px;
+  line-height: 50px;
+  background-color: white;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+
+  font-family: 'Roboto', sans-serif;
+  font-size: large;
+  text-align: left;
+  padding-left: 20px;
+}
+
+.menu-accordion:after {
+  content: '\002B';
+  font-weight: bold;
+  float: right;
+  margin-right: 15px;
+}
+
+.menu-accordion.active:after {
+  content: "\2212";
+}
+
+.active,.menu-accordion:hover {
+  background-color: #ccc;
+}
+
+.menu-accordion-panel {
+  padding: 0 18px;
+  background-color: white;
+  display: none;
+  overflow: hidden;
+}
