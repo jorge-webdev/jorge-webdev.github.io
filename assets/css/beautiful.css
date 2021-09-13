@@ -90,7 +90,7 @@ cursor: pointer;
   font-weight: bold;
 }
 
-.btn-export {
+.btn-submit {
   float: right;
   position: absolute;
   top: 10px;

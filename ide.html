@@ -71,9 +71,7 @@
             </div>-->
             <div id="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)">
 
-                <div class="btn-export" onclick="Swal.fire({ title: 'Export',
-        html: '<pre><code>'+JSON.stringify(editor.export(), null,4)+'</code></pre>'
-        })">Export</div>
+                <div class="btn-submit" onclick="sendJson()">Submit</div>
                 <div class="btn-clear" onclick="editor.clearModuleSelected()">Clear</div>
                 <div class="btn-lock">
                     <i id="lock" class="fas fa-lock" onclick="editor.editor_mode='fixed'; changeMode('lock');"></i>
@@ -90,6 +88,7 @@
     </div>
 
     <script>
+        var SERVER_URL = "http://localhost:8081/handleRequest";
         var id = document.getElementById("drawflow");
         const editor = new Drawflow(id);
         editor.reroute = true;
@@ -255,6 +254,29 @@
             for (conn of outputConnections)
                 if (connectionContext.input_id != conn.node)
                     editor.removeSingleConnection(connectionContext.output_id, conn.node, connectionContext.output_class, conn.output);
+        }
+
+        function sendJson() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", SERVER_URL, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Instructions sent successfully. Your robot should be on the move!'
+                    })
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        html: 'Something went wrong!. Make sure your robot is listening at <b>' + SERVER_URL + '</b>'
+                    })
+                }
+            };
+            xhr.send(JSON.stringify(editor.export()));
         }
 
     </script>
