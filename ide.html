@@ -61,6 +61,10 @@
             <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="condition">
                 <i class="fas fa-question"></i><span> Condition</span>
             </div>
+
+            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="distance">
+                <i class="fas fa-ruler"></i><span> Distance</span>
+            </div>
         </div>
         <div class="col-right">
             <!--<div class="menu">
@@ -150,7 +154,8 @@
             ['stop',      '<i class="far fa-hand-paper"></i> Stop'],
             ['wait',      '<i class="far fa-clock"></i> Wait'],
             ['action',    '<i class="fas fa-calculator"></i> Action'],
-            ['condition', '<i class="fas fa-question"></i> Condition']
+            ['condition', '<i class="fas fa-question"></i> Condition'],
+            ['distance', '<i class="fas fa-ruler"></i> Distance']
         ]);
 
         const NODE_HTML_BOX = new Map([
@@ -163,6 +168,7 @@
             ['wait',      '<div class="box"><p>Delay:</p><input type="text" df-delay placeholder="ms">'],
             ['action',    '<div class="box"><p>Action:</p><input type="text" df-action placeholder="a = a + 1">'],
             ['condition', '<div class="box"><p>Condition:</p><input type="text" df-condition placeholder="a == b">'],
+            ['distance',  '<div class="box"><p>Distance:</p><input type="text" df-condition placeholder="cm">'],
         ]);
 
         function addNodeToDrawFlow(name, pos_x, pos_y) {
@@ -186,7 +192,7 @@
         }
 
         function calculateOutputs(name) {
-            return name == "condition" ? 2 : 1;
+            return name == "condition" || name == "distance" ? 2 : 1;
         }
 
         var transform = '';
@@ -244,7 +250,7 @@
             var outputNode = editor.getNodeFromId(connectionContext.output_id);
             removeDuplicateConnections( outputNode.outputs["output_1"].connections, connectionContext );
 
-            // Condition nodes        
+            // Condition and Distance nodes        
             if ( outputNode.outputs["output_2"] ) {
                 removeDuplicateConnections( outputNode.outputs["output_2"].connections, connectionContext );
             }

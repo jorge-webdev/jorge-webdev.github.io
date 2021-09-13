@@ -225,11 +225,11 @@ cursor: pointer;
   background: #4ea9ff;
 }
 
-.drawflow .condition .outputs .output_1 {
+.drawflow .condition .outputs .output_1, .drawflow .distance .outputs .output_1 {
   background: #43b993;
 }
 
-.drawflow .condition .outputs .output_2 {
+.drawflow .condition .outputs .output_2, .drawflow .distance .outputs .output_2 {
   background: red;
 }
 
