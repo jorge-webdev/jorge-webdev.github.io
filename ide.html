@@ -88,7 +88,7 @@
                 <div class="bar-zoom">
                     <i class="fas fa-search-minus" onclick="editor.zoom_out()"></i>
                     <i class="fas fa-search" onclick="editor.zoom_reset()"></i>
-                    <i class="fas fa-search-plus" onclick="editor.zoom_in()"></i>
+                    <i class="fas fa-search-plus" onclick="editor.zoom_in(0.1)"></i>
                 </div>
             </div>
         </div>
@@ -101,7 +101,7 @@
         editor.reroute = true;
         editor.reroute_fix_curvature = false;
         editor.force_first_input = false;
-        editor.zoom_min = 0.8;
+        editor.zoom_value = 0.02;
         editor.start();
 
         editor.addNode("start", 0, 1, 150, 150, "start", {},

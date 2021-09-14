@@ -52,15 +52,16 @@ header a {
 
 .col {
   overflow: auto;
-  width: 300px;
+  width: 200px;
   height: 100%;
   border-right: 1px solid var(--border-color);
 }
 
 .drag-drawflow {
+  width: 150px;
   line-height: 50px;
   border-bottom: 1px solid var(--border-color);
-  padding-left: 20px;
+  padding-left: 10px;
   cursor: move;
   user-select: none;
 }
@@ -127,9 +128,9 @@ cursor: pointer;
   float: right;
   position: absolute;
   bottom: 10px;
-  right: 140px;
+  right: 170px;
   display: flex;
-  font-size: 24px;
+  font-size: 30px;
   color: white;
   padding: 5px 10px;
   background: #555555;
@@ -143,9 +144,9 @@ cursor: pointer;
   float: right;
   position: absolute;
   bottom: 10px;
-  right: 10px;
+  right: 20px;
   display: flex;
-  font-size: 24px;
+  font-size: 30px;
   color: white;
   padding: 5px 10px;
   background: #555555;
@@ -163,7 +164,7 @@ cursor: pointer;
 
 #drawflow {
   position: relative;
-  width: calc(100vw - 301px);
+  width: calc(100vw - 201px);
   height: calc(100% - 50px);
   top: 40px;
   background: var(--background-color);
@@ -196,6 +197,7 @@ cursor: pointer;
   box-shadow: 0 2px 15px 2px var(--border-color);
   padding: 0px;
   width: 200px;
+  text-align: center;
 }
 
 .drawflow .drawflow-node.selected  {
@@ -235,10 +237,14 @@ cursor: pointer;
 
 .drawflow .drawflow-node .output {
   right: 10px;
+  width: 20px;
+  height: 20px;
 }
 
 .drawflow .drawflow-node .input {
   left: -10px;
+  width: 20px;
+  height: 20px;
   background: white;
 }
 
@@ -374,7 +380,7 @@ cursor: pointer;
 /* Menu */
 .menu-accordion {
   height: 50px;
-  width: 300px;
+  width: 200px;
   line-height: 50px;
   background-color: white;
   border: 1px solid var(--border-color);
